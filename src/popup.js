@@ -47,8 +47,8 @@ const exportFile = async (message, withoutHar = false) => {
   screenshotData = screenshotData.replace(' ', '+')
   if (!withoutHar)
     zip.file(`network_logs_${dateString}.har`, JSON.stringify(message.harLog))
-  const browserInfoString = getBrowserInfo(tab)
-  zip.file(`browser_infos_${dateString}.txt`, browserInfoString)
+  const systemInfoString = getSystemInfo(tab)
+  zip.file(`system_infos_${dateString}.txt`, systemInfoString)
   zip.file(`screenshot_${dateString}.png`, screenshotData, { base64: true })
   const zipBlob = await zip.generateAsync({ type: 'blob' })
   browser.downloads.download({
@@ -57,14 +57,16 @@ const exportFile = async (message, withoutHar = false) => {
   })
 }
 
-const getBrowserInfo = (tab) => {
-  let browserInfoString =
+const getSystemInfo = (tab) => {
+  const manifest = chrome.runtime.getManifest()
+  let systemInfoString =
     `System information\n` +
     `User Agent: ${navigator.userAgent}\n` +
     `OS CPU: ${navigator.oscpu}\n` +
     `Language: ${navigator.language}\n` +
+    `Better Bugs version: ${manifest.version}\n` +
     `Current URL: ${tab.url}`
-  return browserInfoString
+  return systemInfoString
 }
 const getLocalDateTime = () => {
   const now = new Date()

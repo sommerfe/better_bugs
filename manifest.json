@@ -3,7 +3,7 @@
   "name": "Better Bugs",
   "author": "Felix Sommer",
   "short_name": "BB",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "icons": {
     "64": "res/icon.png"
   },
