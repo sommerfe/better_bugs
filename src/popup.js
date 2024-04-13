@@ -1,6 +1,6 @@
 const zip = new JSZip()
 let devtoolsOpened = false
-
+let currentBrowser = typeof browser !== 'undefined' ? browser : chrome
 chrome.runtime.sendMessage({
   action: 'ping',
 })
@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     })
 })
+
 function onMessage(message) {
   if (!message) {
     console.error("ERROR: message object doesn't exist!")
@@ -38,20 +39,25 @@ function onMessage(message) {
 
 const exportFile = async (message, withoutHar = false) => {
   const tab = await getCurrentTab()
-  if (!withoutHar && tab.id !== message.tabId) return
+  if (tab.id !== message.tabId) return
   const dateString = getLocalDateTime()
   const inputString = document.getElementById('comment').value
   if (inputString) zip.file(`comment_${dateString}.txt`, inputString)
-  let screenshotData = await browser.tabs.captureVisibleTab()
+
+  let screenshotData = await currentBrowser.tabs.captureVisibleTab()
+
   screenshotData = screenshotData.replace('data:image/png;base64,', '')
+  screenshotData = screenshotData.replace('data:image/jpeg;base64,', '')
   screenshotData = screenshotData.replace(' ', '+')
-  if (!withoutHar)
+  if (!withoutHar && tab.id === message.tabId)
     zip.file(`network_logs_${dateString}.har`, JSON.stringify(message.harLog))
   const systemInfoString = getSystemInfo(tab)
   zip.file(`system_infos_${dateString}.txt`, systemInfoString)
   zip.file(`screenshot_${dateString}.png`, screenshotData, { base64: true })
+
   const zipBlob = await zip.generateAsync({ type: 'blob' })
-  browser.downloads.download({
+
+  currentBrowser.downloads.download({
     url: URL.createObjectURL(zipBlob),
     filename: `bug_report_${dateString}.zip`,
   })
@@ -62,7 +68,7 @@ const getSystemInfo = (tab) => {
   let systemInfoString =
     `System information\n` +
     `User Agent: ${navigator.userAgent}\n` +
-    `OS CPU: ${navigator.oscpu}\n` +
+    `OS: ${navigator.oscpu ?? navigator.userAgentData.platform}\n` +
     `Language: ${navigator.language}\n` +
     `Better Bugs version: ${manifest.version}\n` +
     `Current URL: ${tab.url}`
@@ -83,9 +89,12 @@ const getLocalDateTime = () => {
 
 const getCurrentTab = async () => {
   return new Promise((resolve, reject) => {
-    browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      var tab = tabs[0]
-      resolve(tab)
-    })
+    currentBrowser.tabs.query(
+      { active: true, currentWindow: true },
+      function (tabs) {
+        var tab = tabs[0]
+        resolve(tab)
+      }
+    )
   })
 }

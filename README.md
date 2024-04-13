@@ -15,7 +15,7 @@ The network logs will be in the `HAR` format which can be easily imported in a b
 
 ## Tutorial
 
-### Using the Firefox extension
+### Using the browser extension
 
 #### Without HAR logs
 
@@ -32,5 +32,6 @@ The network logs will be in the `HAR` format which can be easily imported in a b
 3. For easier use you can open the developer tools in a separate window by clicking on the three dots in the top right corner of the developer tools and selecting "Separate Window". ![Undock into separate window](https://i.ibb.co/YbXkR9T/6.png)
 4. Now click on the button `Create Report` in the Better Bugs extension. ![Create Report](https://i.ibb.co/Kjs3cvK/7.png)
 5. The extension will create a report with a screenshot of the current page, system information, the comment you entered, and the network logs in the `HAR` format and download it as a `.zip` file. ![Report with HAR logs](https://i.ibb.co/M5djbWx/8.png)
-6. To import the network logs in a browser or other tools you can drag and drop the `.har` file in the tool or use the import function of the tool. ![Import HAR logs](https://i.ibb.co/s6qpmFk/9.png)
-7. Having imported the network logs you can see all the requests made by the page and the responses received. ![Network logs](https://i.ibb.co/jghFJBb/10.png)
+6. To reduce the size of the report the network logs should be cleared after every test case or after the bug report is created.
+7. To import the network logs in a browser or other tools you can drag and drop the `.har` file in the tool or use the import function of the tool. ![Import HAR logs](https://i.ibb.co/s6qpmFk/9.png)
+8. Having imported the network logs you can see all the requests made by the page and the responses received. ![Network logs](https://i.ibb.co/jghFJBb/10.png)

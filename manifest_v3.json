@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Better Bugs",
   "author": "Felix Sommer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Better Bugs is a browser extension simplifying bug reporting by capturing network requests, screenshots, system information, and user comments. It automates the collection of vital data, including network interactions and browser environment details, aiding developers in swiftly identifying and resolving issues. With a user-friendly interface, users can effortlessly generate comprehensive bug reports, fostering efficient communication between testers and developers.",
   "icons": {
     "64": "res/icon.png"
