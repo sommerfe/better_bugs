@@ -1,6 +1,7 @@
 const zip = new JSZip()
 let devtoolsOpened = false
 let currentBrowser = typeof browser !== 'undefined' ? browser : chrome
+
 chrome.runtime.sendMessage({
   action: 'ping',
 })
@@ -39,7 +40,7 @@ function onMessage(message) {
 
 const exportFile = async (message, withoutHar = false) => {
   const tab = await getCurrentTab()
-  if (tab.id !== message.tabId) return
+  if (message.tabId && tab.id !== message.tabId) return
   const dateString = getLocalDateTime()
   const inputString = document.getElementById('comment').value
   if (inputString) zip.file(`comment_${dateString}.txt`, inputString)

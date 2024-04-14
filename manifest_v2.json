@@ -3,7 +3,7 @@
   "name": "Better Bugs",
   "author": "Felix Sommer",
   "short_name": "BB",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "icons": {
     "64": "res/icon.png"
   },
@@ -15,13 +15,7 @@
       "id": "betterbugs@example.com"
     }
   },
-  "permissions": [
-    "activeTab",
-    "webRequest",
-    "downloads",
-    "<all_urls>",
-    "devtools"
-  ],
+  "permissions": ["activeTab", "downloads", "<all_urls>", "devtools"],
   "browser_action": {
     "default_title": "Better Bugs",
     "default_popup": "src/popup.html"
