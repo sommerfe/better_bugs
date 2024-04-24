@@ -1,10 +1,13 @@
-const zip = new JSZip()
+const checkDevtoolsOpened = () => {
+  chrome.runtime.sendMessage({
+    action: 'ping',
+  })
+}
+
 let devtoolsOpened = false
 let currentBrowser = typeof browser !== 'undefined' ? browser : chrome
 
-chrome.runtime.sendMessage({
-  action: 'ping',
-})
+checkDevtoolsOpened()
 
 chrome.runtime.onMessage.addListener(onMessage)
 
@@ -12,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document
     .getElementById('createReportButton')
     .addEventListener('click', function () {
+      console.log('devtoolsOpened', devtoolsOpened)
       if (!devtoolsOpened) {
         exportFile({}, true)
       } else {
@@ -39,8 +43,10 @@ function onMessage(message) {
 }
 
 const exportFile = async (message, withoutHar = false) => {
+  if (!devtoolsOpened) checkDevtoolsOpened()
   const tab = await getCurrentTab()
-  if (message.tabId && tab.id !== message.tabId) return
+  if (!tab.id || (message.tabId && tab.id !== message.tabId)) return
+  const zip = new JSZip()
   const dateString = getLocalDateTime()
   const inputString = document.getElementById('comment').value
   if (inputString) zip.file(`comment_${dateString}.txt`, inputString)
@@ -50,7 +56,7 @@ const exportFile = async (message, withoutHar = false) => {
   screenshotData = screenshotData.replace('data:image/png;base64,', '')
   screenshotData = screenshotData.replace('data:image/jpeg;base64,', '')
   screenshotData = screenshotData.replace(' ', '+')
-  if (!withoutHar && tab.id === message.tabId)
+  if (!withoutHar && tab.id === message.tabId && message.harLog)
     zip.file(`network_logs_${dateString}.har`, JSON.stringify(message.harLog))
   const systemInfoString = getSystemInfo(tab)
   zip.file(`system_infos_${dateString}.txt`, systemInfoString)

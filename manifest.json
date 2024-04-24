@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Better Bugs",
   "author": "Felix Sommer",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Better Bugs is a browser extension simplifying bug reporting by capturing network requests, screenshots, user comments, and more.",
   "icons": {
     "64": "res/icon.png"
@@ -15,11 +15,11 @@
   },
   "permissions": ["activeTab", "downloads"],
   "devtools_page": "src/devtools.html",
-  "host_permissions": ["*://*/*"],
+  "host_permissions": ["<all_urls>"],
   "web_accessible_resources": [
     {
       "resources": ["lib/jszip.min.js"],
-      "matches": ["*://*/*"]
+      "matches": ["<all_urls>"]
     }
   ]
 }
