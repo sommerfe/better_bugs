@@ -8,13 +8,14 @@
     "64": "res/icon.png"
   },
   "action": {
-    "default_popup": "src/popup.html",
+    "default_popup": "src/popup/popup.html",
     "default_icon": {
       "64": "res/icon.png"
     }
   },
-  "permissions": ["activeTab", "downloads"],
-  "devtools_page": "src/devtools.html",
+  "permissions": ["activeTab", "downloads", "storage"],
+  "devtools_page": "src/devtools/devtools.html",
+  "options_page": "src/options/options.html",
   "host_permissions": ["<all_urls>"],
   "web_accessible_resources": [
     {

@@ -1,0 +1,35 @@
+body {
+  width: 20rem;
+  padding: 0.8rem;
+}
+
+#comment {
+  width: 100%;
+  min-height: 8em;
+  padding: 1%;
+  margin-bottom: 3%;
+  resize: none;
+}
+
+#createReportButton {
+  background-color: dodgerblue;
+  color: white;
+  padding: 3%;
+  border: none;
+  cursor: pointer;
+}
+
+#information {
+  width: 100%;
+  font-size: 1em;
+}
+
+code {
+  font-family: Consolas, Monaco, 'Andale Mono', monospace;
+  font-size: 0.9em;
+  color: #333;
+}
+
+#label-comment {
+  font-weight: bold;
+}

@@ -26,6 +26,26 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 })
 
+document.querySelector('#go-to-options').addEventListener('click', function () {
+  if (chrome.runtime.openOptionsPage) {
+    chrome.runtime.openOptionsPage()
+  } else {
+    window.open(browser.runtime.getURL('src/options/options.html'))
+  }
+})
+
+chrome.storage.sync.onChanged.addListener((changes, namespace) => {
+  console.log('changes', changes)
+  console.log('namespace', namespace)
+})
+
+browser.storage.sync.get(
+  { favoriteColor: 'red', likesColor: true },
+  (items) => {
+    console.log('items', items)
+  }
+)
+
 function onMessage(message) {
   if (!message) {
     console.error("ERROR: message object doesn't exist!")
@@ -68,7 +88,20 @@ const exportFile = async (message, withoutHar = false) => {
     url: URL.createObjectURL(zipBlob),
     filename: `bug_report_${dateString}.zip`,
   })
+  createToast('Report downloaded successfully! 🎉')
 }
+
+// const createToast = (message) => {
+//   const toastContainer = document.getElementById('toast-container')
+//   const toast = document.createElement('div')
+//   toast.className = 'toast'
+//   toast.textContent = message
+
+//   toastContainer.appendChild(toast)
+//   toast.addEventListener('animationend', () => {
+//     toastContainer.removeChild(toast)
+//   })
+// }
 
 const getSystemInfo = (tab) => {
   const manifest = chrome.runtime.getManifest()
