@@ -8,22 +8,35 @@
   </head>
   <body>
     <h3>Better Bugs</h3>
-    <p id="information">
+    <p id="information1" class="information" class="helpText">
       To add the network requests to the report, the <b>devtools network</b> tab
       has to be open.
     </p>
-    <p id="information">
+    <p id="information2" class="information" class="helpText">
       Open it using <code>Ctrl+Shift+I</code> or <code>Shift+F12</code>
     </p>
+    <label for="show-name-name" id="label_show-name-name">Report name:</label>
+    <input
+      class="show-name-name"
+      id="show-name-name"
+      type="text"
+      name="show-name-name"
+    />
     <label for="comment" id="label-comment">Comment:</label>
     <textarea
       id="comment"
       name="comment"
+      class="comment"
       placeholder="Enter your comment here..."
     ></textarea>
-    <button id="createReportButton">Create Report</button>
-    <button id="go-to-options">Go to options</button>
+    <button id="create-report-button" class="create-report-button">
+      Create Report
+    </button>
     <div id="toast-container"></div>
+    <div id="toast-error-container"></div>
+    <button id="go-to-options" class="go-to-options">
+      <img class="svg-button" src="../../res/gear.svg" />
+    </button>
     <script src="popup.js"></script>
     <script src="../shared.js"></script>
   </body>

@@ -1,26 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>My Test Extension Options</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Better Bugs Extension Settings</title>
+    <link rel="stylesheet" type="text/css" href="options.css" />
     <link rel="stylesheet" type="text/css" href="../styles.css" />
   </head>
   <body>
-    <select id="color">
-      <option value="red">red</option>
-      <option value="green">green</option>
-      <option value="blue">blue</option>
-      <option value="yellow">yellow</option>
-    </select>
+    <div class="container">
+      <h1>Better Bugs Extension Settings</h1>
+      <form id="settings-form">
+        <div class="settings-group">
+          <h3>Extension Appearence</h3>
+          <div class="settings-container">
+            <input
+              type="checkbox"
+              id="disable-help-text"
+              name="disable-help-text"
+            />
+            <label for="disable-help-text">Disable help text</label>
+          </div>
+          <div class="settings-container">
+            <input
+              type="checkbox"
+              id="disable-comment"
+              name="disable-comment"
+            />
+            <label for="disable-comment">Disable comment</label>
+          </div>
+          <div class="settings-container">
+            <input type="checkbox" id="disable-toast" name="disable-toast" />
+            <label for="disable-toast"
+              >Disable confirmation toast for saving the report</label
+            >
+          </div>
+        </div>
 
-    <label>
-      <input type="checkbox" id="like" />
-      I like colors.
-    </label>
+        <div class="settings-group" id="save-as-group">
+          <h3>Report Settings</h3>
+          <div class="settings-container">
+            <input type="checkbox" id="use-save-as" name="use-save-as" />
+            <label for="use-save-as">Use "Save as" to save the report</label>
+          </div>
+        </div>
+        <div class="settings-group">
+          <h3>Report Name</h3>
+          <div class="settings-container">
+            <input type="radio" id="use-default-name" name="options5" />
+            <label for="use-default-name">Use default name</label>
+            <input type="text" id="default-name" name="default-name" />
+          </div>
 
-    <div id="toast-container"></div>
-    <button id="save">Save</button>
-
-    <script src="options.js"></script>
-    <script src="../shared.js"></script>
+          <div class="settings-container">
+            <input type="radio" id="show-name-option" name="show-name-option" />
+            <label for="show-name-settings"
+              >Show name option in extension with default name</label
+            >
+            <input type="text" id="show-name-name" name="show-name-name" />
+          </div>
+          <div class="settings-container">
+            <input type="checkbox" id="add-timestamp" name="add-timestamp" />
+            <label for="add-timestamp"
+              >Add date timestamp at the end of the file name</label
+            >
+          </div>
+        </div>
+        <button type="submit">Save</button>
+        <div id="toast-container" class="toast-container"></div>
+      </form>
+    </div>
   </body>
+  <script src="options.js"></script>
+  <script src="../shared.js"></script>
 </html>

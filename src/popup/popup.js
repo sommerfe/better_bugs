@@ -1,50 +1,126 @@
+let devtoolsOpened = false
+const isFirefox = typeof browser !== 'undefined'
+let currentBrowser = isFirefox ? browser : chrome
+let disableToast
+let useSaveAs
+let useDefaultName
+let showNameOption
+let addTimestamp
+let defaultName
+let reportPrefix
+let downloadId
+
+const main = () => {
+  checkDevtoolsOpened()
+  initializeListerners()
+  initializeOptionsSync()
+}
+
 const checkDevtoolsOpened = () => {
   chrome.runtime.sendMessage({
     action: 'ping',
   })
 }
 
-let devtoolsOpened = false
-let currentBrowser = typeof browser !== 'undefined' ? browser : chrome
+const initializeListerners = () => {
+  initializeRuntimeMessageListener()
+  initializeCreateReportListener()
+  initializeOptionsButtonListener()
+  initializeDownloadListener()
+}
 
-checkDevtoolsOpened()
+const initializeCreateReportListener = () => {
+  document.addEventListener('DOMContentLoaded', () => {
+    document
+      .getElementById('create-report-button')
+      .addEventListener('click', async function () {
+        if (!devtoolsOpened) {
+          exportFile({}, true)
+        } else {
+          const tab = await getCurrentTab()
+          chrome.runtime.sendMessage({
+            action: 'requestHarLog',
+            tabId: tab.id,
+          })
+        }
+      })
+  })
+}
 
-chrome.runtime.onMessage.addListener(onMessage)
-
-document.addEventListener('DOMContentLoaded', () => {
+const initializeOptionsButtonListener = () => {
   document
-    .getElementById('createReportButton')
+    .getElementById('go-to-options')
     .addEventListener('click', function () {
-      console.log('devtoolsOpened', devtoolsOpened)
-      if (!devtoolsOpened) {
-        exportFile({}, true)
+      if (chrome.runtime.openOptionsPage) {
+        chrome.runtime.openOptionsPage()
       } else {
-        chrome.runtime.sendMessage({
-          action: 'requestHarLog',
-        })
+        window.open(browser.runtime.getURL('src/options/options.html'))
       }
     })
-})
+}
 
-document.querySelector('#go-to-options').addEventListener('click', function () {
-  if (chrome.runtime.openOptionsPage) {
-    chrome.runtime.openOptionsPage()
-  } else {
-    window.open(browser.runtime.getURL('src/options/options.html'))
-  }
-})
+const initializeDownloadListener = () => {
+  currentBrowser.downloads.onChanged.addListener((downloadDelta) => {
+    if (downloadDelta.id !== downloadId || disableToast) return
+    if (downloadDelta.state && downloadDelta.state.current === 'complete') {
+      createToast('Download completed successfully! 🎉')
+    }
+    if (
+      (downloadDelta.state && downloadDelta.state.current === 'interrupted') ||
+      downloadDelta.error
+    ) {
+      createToast(
+        `Download failed! ${
+          downloadDelta.error ? 'with error ' + downloadDelta.error.current : ''
+        } `,
+        true
+      )
+    }
+  })
+}
 
-chrome.storage.sync.onChanged.addListener((changes, namespace) => {
-  console.log('changes', changes)
-  console.log('namespace', namespace)
-})
+const initializeRuntimeMessageListener = () => {
+  chrome.runtime.onMessage.addListener(onMessage)
+}
 
-browser.storage.sync.get(
-  { favoriteColor: 'red', likesColor: true },
-  (items) => {
-    console.log('items', items)
-  }
-)
+const initializeOptionsSync = () => {
+  currentBrowser.storage.sync.get(
+    {
+      disableHelpText: false,
+      disableToast: false,
+      disableComment: false,
+      useSaveAs: false,
+      useDefaultName: false,
+      defaultName: 'bug_report',
+      showNameOption: true,
+      showNameName: 'bug_report',
+      addTimestamp: false,
+    },
+    (items) => {
+      if (items.disableHelpText) {
+        document.getElementById('information1').style.display = 'none'
+        document.getElementById('information2').style.display = 'none'
+      }
+      disableToast = items.disableToast
+      useSaveAs = items.useSaveAs
+      useDefaultName = items.useDefaultName
+      showNameOption = items.showNameOption
+      addTimestamp = items.showNameOption
+      defaultName = items.defaultName
+      if (items.disableComment) {
+        document.getElementById('comment').style.display = 'none'
+        document.getElementById('label-comment').style.display = 'none'
+      }
+      if (useDefaultName || !showNameOption) {
+        document.getElementById('show-name-name').style.display = 'none'
+        document.getElementById('label_show-name-name').style.display = 'none'
+      }
+      if (items.showNameName) {
+        document.getElementById('show-name-name').value = items.showNameName
+      }
+    }
+  )
+}
 
 function onMessage(message) {
   if (!message) {
@@ -65,7 +141,7 @@ function onMessage(message) {
 const exportFile = async (message, withoutHar = false) => {
   if (!devtoolsOpened) checkDevtoolsOpened()
   const tab = await getCurrentTab()
-  if (!tab.id || (message.tabId && tab.id !== message.tabId)) return
+  if (!tab.id || (message.tabId && tab.id !== message.tabId)) withoutHar = true
   const zip = new JSZip()
   const dateString = getLocalDateTime()
   const inputString = document.getElementById('comment').value
@@ -76,32 +152,54 @@ const exportFile = async (message, withoutHar = false) => {
   screenshotData = screenshotData.replace('data:image/png;base64,', '')
   screenshotData = screenshotData.replace('data:image/jpeg;base64,', '')
   screenshotData = screenshotData.replace(' ', '+')
-  if (!withoutHar && tab.id === message.tabId && message.harLog)
+
+  if (!withoutHar && message.harLog)
     zip.file(`network_logs_${dateString}.har`, JSON.stringify(message.harLog))
   const systemInfoString = getSystemInfo(tab)
   zip.file(`system_infos_${dateString}.txt`, systemInfoString)
   zip.file(`screenshot_${dateString}.png`, screenshotData, { base64: true })
 
   const zipBlob = await zip.generateAsync({ type: 'blob' })
+  const filename = getReportName(
+    useDefaultName,
+    showNameOption,
+    defaultName,
+    addTimestamp,
+    dateString
+  )
 
-  currentBrowser.downloads.download({
-    url: URL.createObjectURL(zipBlob),
-    filename: `bug_report_${dateString}.zip`,
-  })
-  createToast('Report downloaded successfully! 🎉')
+  currentBrowser.downloads
+    .download({
+      url: URL.createObjectURL(zipBlob),
+      filename: filename,
+      saveAs: isFirefox ? false : useSaveAs,
+    })
+    .then((d) => {
+      downloadId = d
+    })
+    .catch((error) => {
+      createToast(
+        `Download failed! ${error ? 'with error ' + error.message : ''} `,
+        true
+      )
+    })
 }
 
-// const createToast = (message) => {
-//   const toastContainer = document.getElementById('toast-container')
-//   const toast = document.createElement('div')
-//   toast.className = 'toast'
-//   toast.textContent = message
-
-//   toastContainer.appendChild(toast)
-//   toast.addEventListener('animationend', () => {
-//     toastContainer.removeChild(toast)
-//   })
-// }
+const getReportName = (
+  useDefaultName,
+  showNameOption,
+  defaultName,
+  addTimestamp,
+  dateString
+) => {
+  const reportPrefix =
+    useDefaultName || !showNameOption
+      ? defaultName
+      : document.getElementById('show-name-name').value
+  const reportPostfix = addTimestamp ? '_' + dateString : ''
+  const reportEnd = '.zip'
+  return `${reportPrefix}${reportPostfix}${reportEnd}`
+}
 
 const getSystemInfo = (tab) => {
   const manifest = chrome.runtime.getManifest()
@@ -138,3 +236,5 @@ const getCurrentTab = async () => {
     )
   })
 }
+
+main()
