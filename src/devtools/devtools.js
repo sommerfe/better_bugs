@@ -26,6 +26,7 @@ const onPing = () => {
 }
 
 const onGetHAR = (message) => {
+  if (message.tabId !== chrome.devtools.inspectedWindow.tabId) return
   chrome.devtools.network.getHAR((harLog) => {
     chrome.runtime.sendMessage({
       action: 'exportFile',
