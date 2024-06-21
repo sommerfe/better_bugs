@@ -39,5 +39,5 @@ The network logs will be in the `HAR` format which can be easily imported in a b
 #### Settings
 
 1. Click on the Better Bugs icon in the toolbar to open the extension.
-2. Click on the gear icon in the top right corner to open the settings. ![Settings](https://ibb.co/Bcj6TKPg)
+2. Click on the gear icon in the top right corner to open the settings. ![Settings](https://ibb.co/Bcj6TKP)
 3. Here you can change the default settings of the extension. ![Settings](https://ibb.co/WpKq6gk)
