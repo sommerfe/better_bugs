@@ -19,7 +19,7 @@ The network logs will be in the `HAR` format which can be easily imported in a b
 
 #### Without HAR logs
 
-1. Install the extension in your browser. You can find the extension in the [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/better-bugs/).
+1. Install the extension in your browser. You can find the extension in the [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/better-bugs/) or on the [Chrome Web Store](https://chromewebstore.google.com/detail/better-bugs/ljpdjnlagkobnbkfmejphnpdhclekoeb)
 2. Navigate to the page where you found the bug. ![Website with bug](https://i.ibb.co/D7FSTkP/1.png)
 3. Click on the Better Bugs icon in the toolbar to open the extension. Enter a comment if needed and then click on the button `Create Report`. ![Better Bugs open](https://i.ibb.co/h7nss7q/2.png)
 4. The extension will create a report with a screenshot of the current page, system information, and the comment you entered and download it as a `.zip` file. ![Report](https://i.ibb.co/d4mQWQF/3.png)
@@ -35,3 +35,9 @@ The network logs will be in the `HAR` format which can be easily imported in a b
 6. To reduce the size of the report the network logs should be cleared after every test case or after the bug report is created.
 7. To import the network logs in a browser or other tools you can drag and drop the `.har` file in the tool or use the import function of the tool. ![Import HAR logs](https://i.ibb.co/s6qpmFk/9.png)
 8. Having imported the network logs you can see all the requests made by the page and the responses received. ![Network logs](https://i.ibb.co/jghFJBb/10.png)
+
+#### Settings
+
+1. Click on the Better Bugs icon in the toolbar to open the extension.
+2. Click on the gear icon in the top right corner to open the settings. ![Settings](https://ibb.co/Bcj6TKPg)
+3. Here you can change the default settings of the extension. ![Settings](https://ibb.co/WpKq6gk)

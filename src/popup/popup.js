@@ -11,8 +11,8 @@ let reportPrefix
 let downloadId
 
 const main = () => {
-  checkDevtoolsOpened()
   initializeListerners()
+  checkDevtoolsOpened()
   initializeOptionsSync()
 }
 
@@ -30,6 +30,7 @@ const initializeListerners = () => {
 }
 
 const initializeCreateReportListener = () => {
+  console.log('initializeCreateReportListener')
   document.addEventListener('DOMContentLoaded', () => {
     document
       .getElementById('create-report-button')
@@ -38,6 +39,7 @@ const initializeCreateReportListener = () => {
           exportFile({}, true)
         } else {
           const tab = await getCurrentTab()
+          console.log('tab', tab)
           chrome.runtime.sendMessage({
             action: 'requestHarLog',
             tabId: tab.id,
@@ -105,7 +107,7 @@ const initializeOptionsSync = () => {
       useSaveAs = items.useSaveAs
       useDefaultName = items.useDefaultName
       showNameOption = items.showNameOption
-      addTimestamp = items.showNameOption
+      addTimestamp = items.addTimestamp
       defaultName = items.defaultName
       if (items.disableComment) {
         document.getElementById('comment').style.display = 'none'
@@ -139,9 +141,13 @@ function onMessage(message) {
 }
 
 const exportFile = async (message, withoutHar = false) => {
+  console.log('devtoolsOpened', devtoolsOpened, withoutHar)
   if (!devtoolsOpened) checkDevtoolsOpened()
   const tab = await getCurrentTab()
+  console.log('tab.id', tab.id)
+  console.log('message.tabId', message.tabId)
   if (!tab.id || (message.tabId && tab.id !== message.tabId)) withoutHar = true
+  console.log('withoutHar', withoutHar)
   const zip = new JSZip()
   const dateString = getLocalDateTime()
   const inputString = document.getElementById('comment').value
